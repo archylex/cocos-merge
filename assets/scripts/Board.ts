@@ -62,10 +62,10 @@ export class Board extends Component {
                 const uiTransform = cell.getComponent(UITransform);
                 const width = uiTransform.width;
                 const height = uiTransform.height;
-                const offsetX = - this.column * (width / 2 + this.gap) / this.column;
-                const offsetY = - this.row * (height / 2 + this.gap) / this.row;
-                const x = offsetX + column * (width + 2 * this.gap);
-                const y = offsetY + row * (height + 2 * this.gap);
+                const offsetX = width/2 - (this.column * (width + this.gap) - this.gap) / 2;
+                const offsetY = height/2 + (this.row * (height + this.gap) - this.gap) / 2;
+                const x = offsetX + column * (width + this.gap);
+                const y = offsetY - row * (height + this.gap);
 
                 cell.setPosition(x, y, 0);
                 cell.name = 'Cell-' + row + ',' + column;
@@ -103,7 +103,7 @@ export class Board extends Component {
         }        
     }
 
-    private getRandomNumbers() {
+    private getRandomNumbers(): number[] {
         const array = new Array(this.row * this.column).fill(0).map((e, i) => e = i);
         const result = [];
         
@@ -115,7 +115,7 @@ export class Board extends Component {
         return result;
     }
 
-    onDrop(event: DropEvent) {
+    onDrop(event: DropEvent): void {
         const uit = this.node.parent.getComponent(UITransform);
         let pos = uit.convertToNodeSpaceAR(new Vec3(event.position.x, event.position.y, 0));
         
@@ -169,7 +169,7 @@ export class Board extends Component {
         }        
     }
 
-    getSelectedCell(pos: Vec3, sign: number): CellResultType | null {
+    private getSelectedCell(pos: Vec3, sign: number): CellResultType | null {
         for (let row = 0; row < this.row; row++) {
             for (let column = 0; column < this.column; column++) {
                 const cell = this.board[row][column];
@@ -199,7 +199,7 @@ export class Board extends Component {
         return null;
     }      
 
-    getFirstEmptyCell(startRow: number, startColumn: number, space: Item = null): Vec2 {
+    private getFirstEmptyCell(startRow: number, startColumn: number, space: Item = null): Vec2 {
         if (space !== null) {
             this.gameBoard[space.row][space.column] = 0;
         }
@@ -227,7 +227,7 @@ export class Board extends Component {
         return new Vec2(space.column, space.row);
     }
 
-    checkExistPos(array: Vec2[], pos: Vec2): boolean {
+    private checkExistPos(array: Vec2[], pos: Vec2): boolean {
         for (let i = 0; i < array.length; i++) {
             if (array[i].y === pos.y && array[i].x === pos.x) {
                 return true;
@@ -237,11 +237,11 @@ export class Board extends Component {
         return false;
     }
 
-    checkRangeBoard(row: number, column: number): boolean {
+    private checkRangeBoard(row: number, column: number): boolean {
         return row >= 0 && row < this.row && column >= 0 && column < this.column;
     }
 
-    getNeighbors(pos: Vec2, checked: Vec2[], neighbors: Vec2[]) {
+    private getNeighbors(pos: Vec2, checked: Vec2[], neighbors: Vec2[]): void {
         for (let i = 0; i < DirectionEnum.length; i++) {
             const row = pos.y + DirectionEnum[i].y;
             const column = pos.x + DirectionEnum[i].x;

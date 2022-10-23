@@ -332,8 +332,8 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "row": 3,
-    "column": 2,
+    "row": 2,
+    "column": 3,
     "gap": 1,
     "cellPrefab": {
       "__uuid__": "af4bd6b6-4b39-48ab-b3de-4d0c6fab9f9b",
