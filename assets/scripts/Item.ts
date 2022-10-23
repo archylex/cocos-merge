@@ -32,6 +32,7 @@ export class Item extends Component {
     start() {
         this.node.on(Node.EventType.TOUCH_START, (event) => {
             this.mouseDown = true;
+            this.node.setSiblingIndex(100);
         }, this);
 
         this.node.on(Node.EventType.TOUCH_MOVE, (event) => {
