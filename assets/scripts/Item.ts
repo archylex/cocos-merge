@@ -2,6 +2,7 @@
 import { _decorator, Component, Node, Vec2, EventTouch, Prefab, instantiate } from 'cc';
 const { ccclass, property } = _decorator;
 import { DropEvent } from './DropEvent';
+import { Events } from './Events'
 
 /**
  * Predefined variables
@@ -47,7 +48,7 @@ export class Item extends Component {
 
         this.node.on(Node.EventType.TOUCH_END, (event) => {
             this.mouseDown = false;
-            this.node.dispatchEvent(new DropEvent('dropped', true, event.getUILocation(), this.node));
+            this.node.dispatchEvent(new DropEvent(Events.GAME_EVENT.DROPPED, true, event.getUILocation(), this.node));
         });
 
         this.levelUp();

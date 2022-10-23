@@ -4,6 +4,8 @@ import { DropEvent } from './DropEvent';
 import { Item } from './Item';
 import { CellResultType } from './CellResultType';
 import { DirectionEnum } from './DirectionEnum';
+import { Events } from './Events'
+import { utils } from './Utils'
 const { ccclass, property } = _decorator;
 
 /**
@@ -25,19 +27,19 @@ export class Board extends Component {
     gameBoard: number[][] = [];
     items: Item[] = [];
 
-    @property()
+    @property({ range: [1, 10, 1] })
     private row: number = 3;
 
-    @property()
+    @property({ range: [1, 10, 1] })
     private column: number = 2;
 
-    @property()
+    @property({ range: [0, 100, 1] })
     private gap: number = 1;
 
-    @property({ type: Prefab })
+    @property({ type: Prefab, displayName: 'Cell Prefabs'  })
     private cellPrefab = null;
 
-    @property({ type: Prefab })
+    @property({ type: Prefab, displayName: 'Items Prefabs' })
     private itemsPrefab = [];
 
 
@@ -46,7 +48,11 @@ export class Board extends Component {
 
         this.createRandomItems();
 
-        this.node.on('dropped', this.onDrop, this);               
+        this.node.on(Events.GAME_EVENT.DROPPED, this.onDrop, this);               
+    }
+
+    onDestroy() {
+        this.node.off(Events.GAME_EVENT.DROPPED, this.onDrop, this);   
     }
 
     createBoard(): void {
@@ -63,7 +69,7 @@ export class Board extends Component {
                 const width = uiTransform.width;
                 const height = uiTransform.height;
                 const offsetX = width/2 - (this.column * (width + this.gap) - this.gap) / 2;
-                const offsetY = height/2 + (this.row * (height + this.gap) - this.gap) / 2;
+                const offsetY = (this.row * (height + this.gap) - this.gap) / 2 - height/2;
                 const x = offsetX + column * (width + this.gap);
                 const y = offsetY - row * (height + this.gap);
 
@@ -78,7 +84,7 @@ export class Board extends Component {
     }
 
     createRandomItems(): void {
-        const activeNums: number[] = this.getRandomNumbers();
+        const activeNums: number[] = utils.getRandomIndices(this.row * this.column);
         
         for (let i = 0; i < activeNums.length; i++) {
             const itemIdx = i !== activeNums.length - 1 ? 0 : 1; 
@@ -101,18 +107,6 @@ export class Board extends Component {
 
             this.items.push(itemComponent);            
         }        
-    }
-
-    private getRandomNumbers(): number[] {
-        const array = new Array(this.row * this.column).fill(0).map((e, i) => e = i);
-        const result = [];
-        
-        for (let i = 0; i < array.length; i++) {
-            const idx = Math.floor(Math.random() * array.length);    
-            result.push(array.splice(idx, 1));
-        }
-
-        return result;
     }
 
     onDrop(event: DropEvent): void {
